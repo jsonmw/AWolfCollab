@@ -46,11 +46,11 @@ p {
     margin-right: 0px;
     list-style: none;
     float: right;
-
 }
 
 #navbar ul li {
     float: left;
+    padding: 1em;
 }
 
 #navbar ul li a {
@@ -58,7 +58,6 @@ p {
     text-decoration: none;
     color: white;
     text-align: center;
-    padding: 1em;
 }
 
 #navbar ul li a:hover, 
