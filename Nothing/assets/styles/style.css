@@ -1,105 +1,144 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-  
-html, body {
-    /* max-width:500px;
-    margin: auto; */
-    font-family: sans-serif;
-    line-height: 1.7em;
-    text-align: center;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-h1, h2, h3 {
-    padding-bottom: 20px;
+html,
+body {
+  /* max-width:500px;
+    margin: auto; */
+  font-family: sans-serif;
+  color: white;
+  line-height: 1.7em;
+  text-align: center;
+}
+
+h1,
+h2 {
+  padding-bottom: 30px;
+  margin: 20px auto;
+}
+
+h3 {
+  padding-bottom: 0px;
 }
 
 #main-header {
-    margin-top: 20px;
+  font-size: 54px;
+  color:white;
+  
+  font-style: italic;
 }
 
 p {
-    margin: 10px;
+  margin: 50px auto;
+  max-width: 500px;
+}
+
+.main-content {
+  background: url("https://t4.ftcdn.net/jpg/00/07/55/11/360_F_7551128_CHJ6DwqTgOQHY9MunSDW15yYySEIG3jI.jpg")
+    center center/cover;
+  background-position: fixed;
+}
+
+.main-content-hell {
+  background: url("https://pbs.twimg.com/media/Eh1mY2PUcAAn2ov?format=jpg&name=large")
+    no-repeat center center/cover;
+  background-position: sticky;
 }
 
 /* Navigation Menu attributes */
 
 .container {
-    margin: auto;
-    max-width: 1100px;
-    overflow: auto;
-    padding: 0 20px;
+  margin: auto;
+  max-width: 1100px;
+  overflow: auto;
+  padding: 0 20px;
 }
 
 #navbar {
-    background: black;
-    color: white;
+  background: navy;
+  color: white;
 }
 
 #navbar h2 {
-    float: left;
-    margin-top: 20px
+  float: left;
+  margin: auto;
+  margin-top: 15px;
 }
 #navbar ul {
-    margin-right: 0px;
-    list-style: none;
-    float: right;
+  margin-right: 0px;
+  list-style: none;
+  float: right;
 }
 
 #navbar ul li {
-    float: left;
-    padding: 1em;
+  float: left;
+  padding: 1em;
 }
 
 #navbar ul li a {
-    display: block;
-    text-decoration: none;
-    color: white;
-    text-align: center;
+  display: block;
+  text-decoration: none;
+  color: white;
+  text-align: center;
 }
 
-#navbar ul li a:hover, 
+#navbar ul li a:hover,
 #navbar ul li a.current {
-    color:green;
-    background: #444;
-    font-size: 32px;
+  color: green;
+  background: #444;
+  font-size: 32px;
 }
 
 #navbar ul li a:visited {
-    color: purple;
+  color: red;
 }
 
 #navbar ul li a:hover:visited {
-    color: orange;
+  color: orange;
 }
 
 #greeting-area {
-    display:block;
-    align-items: center;
+  display: block;
+  align-items: center;
 }
 
 /* Image attributes */
 
+img {
+  border-radius: 75px;
+}
 
 .jim-visible {
-    display: inline-block;
-    width: 300px;
-    height: auto;
-    align-self: center;
+  display: inline-block;
+  width: 300px;
+  height: auto;
+  align-self: center;
 }
 
 .jim-invisible {
-    display: none;
+  display: none;
 }
 
-
 input {
-    display: inline;
+  display: inline;
 }
 
 button {
-    display: inline;
+  display: inline;
 }
 
+#greeting {
+  max-width: fit-content;
+  margin: 30px auto;
+  background: black;
+  color: white;
+}
+
+footer {
+  margin-bottom: 0;
+  background: navy;
+  overflow: auto;
+}
