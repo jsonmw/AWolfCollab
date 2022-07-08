@@ -1,3 +1,53 @@
-p {
-    background: 'red';
+* {
+    box-sizing: border-box;
+}
+  
+html {
+    max-width:500px;
+    margin: auto;
+    font-family: sans-serif;
+}
+
+#container {
+    align-content: center;
+}
+ 
+a {
+    text-decoration: none;
+    color: green;
+}
+
+a:hover {
+    color:blue;
+    font-size: 32px;
+}
+
+#greeting-area {
+    display:block;
+    align-items: center;
+}
+
+input {
+    display: inline;
+}
+
+button {
+    display: inline;
+}
+
+a:hover:visited {
+    color: orange;
+}
+
+a:visited {
+    color: purple;
+}
+
+ul {
+    justify-content: left;
+}
+
+ul li {
+    list-style: none;
+    display: inline-block;
 }
