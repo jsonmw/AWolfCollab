@@ -158,7 +158,7 @@ input {
 
 input {
     font-size: 20px;
-    padding: 2px;
+    padding: 2px 5px;
     margin: 30px 10px;
     border: black;
 }
