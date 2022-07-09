@@ -135,20 +135,30 @@ img {
 
 input {
   display: inline;
+  border-radius: 5px;
 }
 
 .btn {
   display: inline-block;
   border: none;
+  border-radius: 10px;
   font-size: 16px;
   color: white;
   background: black;
   padding: 6px 10px;
   cursor: pointer;
+  font-weight: bold;
+}
+
+.btn:hover {
+    background: rgb(116, 2, 2);
+    color: black;
+    font-weight: bold;
 }
 
 input {
-    font-size: 22px;
+    font-size: 20px;
+    padding: 2px;
     margin: 30px 10px;
     border: black;
 }
