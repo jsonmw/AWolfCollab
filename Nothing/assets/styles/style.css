@@ -93,14 +93,14 @@ p {
 #navbar ul li a:hover,
 #navbar ul li a.current {
   color: white;
-  background: #444;
   font-size: 32px;
   font-style: italic;
+  font-weight: bold;
 }
-
+/* 
 #navbar ul li a:visited {
   color: purple;
-}
+} */
 
 #navbar ul li a:hover:visited {
   color: red;
