@@ -38,12 +38,14 @@ p {
 }
 
 .main-content {
+    padding: 130px 0px;
   background: url("https://t4.ftcdn.net/jpg/00/07/55/11/360_F_7551128_CHJ6DwqTgOQHY9MunSDW15yYySEIG3jI.jpg")
     center center/cover;
   
 }
 
 .main-content-hell {
+    padding: 130px 0px;
     background: url("https://pbs.twimg.com/media/Eh1mY2PUcAAn2ov?format=jpg&name=large")
     no-repeat center center/cover;
 }
@@ -144,9 +146,10 @@ button {
 }
 
 #footer {
-  margin-bottom: 0px;
+  padding-bottom: 0px;
   background: black;
   overflow: auto;
   min-height: 50px;
   max-width: 100%;
+  position: sticky;
 }
