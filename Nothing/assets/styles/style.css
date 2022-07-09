@@ -12,6 +12,8 @@ body {
   color: white;
   line-height: 1.7em;
   text-align: center;
+  height: 100%;
+  background-color: black;
 }
 
 h1,
@@ -27,7 +29,6 @@ h3 {
 #main-header {
   font-size: 54px;
   color:white;
-  
   font-style: italic;
 }
 
@@ -39,27 +40,29 @@ p {
 .main-content {
   background: url("https://t4.ftcdn.net/jpg/00/07/55/11/360_F_7551128_CHJ6DwqTgOQHY9MunSDW15yYySEIG3jI.jpg")
     center center/cover;
-  background-position: fixed;
+  
 }
 
 .main-content-hell {
-  background: url("https://pbs.twimg.com/media/Eh1mY2PUcAAn2ov?format=jpg&name=large")
+    background: url("https://pbs.twimg.com/media/Eh1mY2PUcAAn2ov?format=jpg&name=large")
     no-repeat center center/cover;
-  background-position: sticky;
 }
 
 /* Navigation Menu attributes */
 
 .container {
-  margin: auto;
-  max-width: 1100px;
-  overflow: auto;
-  padding: 0 20px;
+    margin: auto;
+    max-width: 1100px;
+    overflow: auto;
+    padding: 0 20px;
+    height: 100%;
+    min-height: 100%;
 }
 
 #navbar {
-  background: navy;
+  background: black;
   color: white;
+  overflow: auto;
 }
 
 #navbar h2 {
@@ -71,6 +74,7 @@ p {
   margin-right: 0px;
   list-style: none;
   float: right;
+  overflow: auto;
 }
 
 #navbar ul li {
@@ -83,21 +87,23 @@ p {
   text-decoration: none;
   color: white;
   text-align: center;
+
 }
 
 #navbar ul li a:hover,
 #navbar ul li a.current {
-  color: green;
+  color: white;
   background: #444;
   font-size: 32px;
+  font-style: italic;
 }
 
 #navbar ul li a:visited {
-  color: red;
+  color: purple;
 }
 
 #navbar ul li a:hover:visited {
-  color: orange;
+  color: red;
 }
 
 #greeting-area {
@@ -137,8 +143,10 @@ button {
   color: white;
 }
 
-footer {
-  margin-bottom: 0;
-  background: navy;
+#footer {
+  margin-bottom: 0px;
+  background: black;
   overflow: auto;
+  min-height: 50px;
+  max-width: 100%;
 }

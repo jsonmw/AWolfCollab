@@ -8,7 +8,7 @@ const badJim = document.getElementById("bad-jim");
 const mainHeader = document.getElementById("main-header");
 const menuHeader = document.getElementById("menu-header");
 const mainContent = document.getElementById("main-content");
-const listItems = document.querySelectorAll("li"); // returns an object containing all list items that you can reference by index
+const listItems = document.querySelectorAll("li a"); // returns an object containing all list items that you can reference by index
 goodJim.addEventListener("mouseover", hailSatan);
 badJim.addEventListener("mouseover", hailSatan);
 
