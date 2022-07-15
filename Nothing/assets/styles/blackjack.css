@@ -1,0 +1,71 @@
+:root {
+  --screen-color: lime;
+  --output-color: #333;
+}
+
+/* main {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* height: 100%; */
+/* max-width: 30rem;
+
+} */
+/* .blackjack-container {
+} */
+header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5rem;
+}
+
+/* Computer styling */
+#computer-player-output {
+  margin: auto;
+  background: var(--screen-color);
+  height: 10rem;
+  width: 30rem;
+  overflow: scroll;
+}
+
+#computer-player-output p {
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--output-color);
+    text-align: left;
+    font-weight: bold;
+    padding-left: 1rem;
+}
+
+.human-player-input {
+  margin-top: 5rem;
+}
+
+/* Blackjack Buttons */
+
+#bj-input-buttons {
+  margin-top: 0.5rem;
+}
+
+.bj-btn {
+  height: 2rem;
+  width: 4rem;
+  margin: 1rem 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: all 10s ease;
+}
+
+.bj-btn:hover {
+  transform: scale(1.5);
+  border-radius: 50%;
+  background: red;
+}
+
+#bj-exit-button {
+    margin-top: 4rem auto;
+    height: 4rem;
+    width: 6rem;
+}

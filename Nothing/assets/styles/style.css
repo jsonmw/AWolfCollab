@@ -1,7 +1,20 @@
+:root {
+  --primary-font-color: white
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Contains all content between header and footer */
+.page-container {
+  display: flex;
+  height: 100%;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-content: center;
 }
 
 html,
@@ -9,12 +22,13 @@ body {
   /* max-width:500px;
     margin: auto; */
   font-family: sans-serif;
-  color: white;
+  color: var(--primary-font-color);
   line-height: 1.7em;
   text-align: center;
   height: 100%;
   background-color: black;
 }
+
 
 h1,
 h2 {
@@ -53,13 +67,15 @@ p {
 
 /* Navigation Menu attributes */
 
-.container {
+.nav-container {
     margin: auto;
     max-width: 1100px;
     overflow: auto;
     padding: 0 20px;
     height: 100%;
-    min-height: 100%;
+    position: sticky;
+    top: 0;
+   
 }
 
 #navbar {
@@ -177,4 +193,13 @@ input {
   min-height: 50px;
   max-width: 100%;
   position: sticky;
+  width: 100%;
+  bottom: 0;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+}
+
+#front-text {
+  color: red;
 }
