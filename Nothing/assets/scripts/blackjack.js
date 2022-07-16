@@ -205,8 +205,11 @@ class Player {
 // Every story needs a bad guy
 
 class Jimbo extends Player {
+
   // Executes one complete Jimbo game after the player stops.
+
   jimboTurn() {
+
     let jimboHit;
     while (this.total < JIMBO_MAX) {
       setTimeout((jimboHit = this.hit()), 2000);
@@ -229,6 +232,7 @@ class Jimbo extends Player {
 // Holds information about the instantiated individual game
 
 class Game {
+    
   constructor() {
     currentDeck = new Deck();
     human = new Player();
