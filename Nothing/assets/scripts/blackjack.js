@@ -207,6 +207,7 @@ class Player {
 // Every story needs a bad guy
 
 class Jimbo extends Player {
+    
   // Executes one complete Jimbo game after the player stops.
 
   jimboTurn() {
