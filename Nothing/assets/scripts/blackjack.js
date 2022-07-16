@@ -193,15 +193,13 @@ class Player {
 
   //   Unfinished
 
-  split(currentHand) {
-    // will need to handle two decks at once and figure out what split means.. or get rid of button
-  }
+//   split(currentHand) {
+//     // will need to handle two decks at once and figure out what split means.. or get rid of button
+//   }
 
-  //  Unfinished
-
-  doubleDown(currentHand) {
-    // not sure I actually even know what this does in blackjack.
-  }
+//   doubleDown(currentHand) {
+//     // not sure I actually even know what this does in blackjack.
+//   }
 }
 
 // Every story needs a bad guy
@@ -254,7 +252,7 @@ class Game {
   ifBlackJack(player) {
     return player.total === MAX_VALUE;
   }
-  
+
   // Outputs Jimbo's current visible card
 
   displayJimbo() {
