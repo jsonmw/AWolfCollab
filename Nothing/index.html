@@ -10,58 +10,59 @@
     <meta name="description" content="Hi I'm Jim Boyle, For Us All!" />
   </head>
   <body>
-    <template id="name-input"> </template>
-    <nav id="navbar">
-      <div class="container">
+    <div class="bg-container" id="main-bg">
+      <!-- <template id="name-input"> </template> -->
+
+      <nav class="nav-container">
         <h2 id="menu-header">JIMBO</h2>
-        <ul>
-          <!-- alt+shift+up/down to copy thenchange to add page and then add .html file to project -->
-          <li><a href="#">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="blackjack.html">Meet Jim</a></li>
-          <li><a href="mission.html">Mission</a></li>
-          <li><a href="warmachine.html">War Machine</a></li>
-        </ul>
-      </div>
-    </nav>
-    <div id="main-content" class="main-content">
-      <div class="nav-container">
-        <div class="main-page-content">
-          <header><h1 id="main-header"><span id ="front-text">JIMBO</span> OYLE</h1></header>
-          <img
-            id="good-jim"
-            class="jim-visible"
-            src="https://pbs.twimg.com/profile_images/1316205953386250240/CRVNvFJK_400x400.jpg"
-            alt="Jim Lookin' Good"
-          />
-          <img
-            id="bad-jim"
-            class="jim-invisible"
-            src="https://images.squarespace-cdn.com/content/v1/522f5dbee4b0ad0c9681b3a5/1569789780085-DUE75KMRYZ0DU4VQFGQ4/HBM052.jpg"
-            alt="Jim Lookin' Not So Good"
-          />
+          <ul>
+            <!-- alt+shift+up/down to copy thenchange to add page and then add .html file to project -->
+            <li><a href="#">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="blackjack.html">Meet Jim</a></li>
+            <li><a href="mission.html">Mission</a></li>
+            <li><a href="warmachine.html">War Machine</a></li>
+          </ul>
+      </nav>
+
+      <main>
+        <section class="page-container" id="main-page">
+          <div id="the-jim-zone">
+              <h1 id="main-header">JIMBO</span> OYLE</h1>
+              <img
+                id="good-jim"
+                class="jim-visible"
+                src="https://pbs.twimg.com/profile_images/1316205953386250240/CRVNvFJK_400x400.jpg"
+                alt="Jim Lookin' Good"
+              />
+              <img
+                id="bad-jim"
+                class="jim-invisible"
+                src="https://images.squarespace-cdn.com/content/v1/522f5dbee4b0ad0c9681b3a5/1569789780085-DUE75KMRYZ0DU4VQFGQ4/HBM052.jpg"
+                alt="Jim Lookin' Not So Good"
+              />
+          </div>
+        
           <div id="greeting-area">
             <h3>What's your name?</h3>
-            <input id="name"/>
+            <input id="name-input"/>
             <button class="btn" id="greet">Greet Me</button>
-            <div id="greeting"></div>
+            <div id="greeting-box">
+              <div id="greeting"></div>
           </div>
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt
-            vero laudantium dolorem nostrum itaque, laboriosam assumenda
-            distinctio a sequi magni!
-          </p>
-
-          <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Mollitia numquam ullam iste quidem veritatis? Blanditiis voluptates quos omnis, laborum consequuntur deleniti et maxime ab animi doloremque asperiores praesentium ipsam perferendis quidem similique reprehenderit consequatur perspiciatis nulla quasi laboriosam esse fugit. Omnis, veritatis voluptate incidunt esse et doloremque, ducimus ea voluptatum facilis tenetur eveniet autem! Necessitatibus vitae voluptatem explicabo iste voluptas!
-          </p>
-        </div>
-      </div>
-    </div>
-    <div id="footer">
-    <footer>
-      <p><strong><em>Thank you for visiting my page!</strong></em></p>
-    </footer>
-    </div>
+          </div> 
+          <div id="main-info">
+              <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt
+                vero laudantium dolorem nostrum itaque, laboriosam assumenda
+                distinctio a sequi magni!
+              </p>
+          </div>
+        </section>
+      </main>
+      <footer>
+        <p><strong><em>Thank you for visiting my page!</strong></em></p>
+      </footer>
+  </div>
   </body>
 </html>

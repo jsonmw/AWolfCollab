@@ -7,7 +7,7 @@ const goodJim = document.getElementById("good-jim");
 const badJim = document.getElementById("bad-jim");
 const mainHeader = document.getElementById("main-header");
 const menuHeader = document.getElementById("menu-header");
-const mainContent = document.getElementById("main-content");
+const mainContent = document.getElementById("main-bg");
 const listItems = document.querySelectorAll("li a"); // returns an object containing all list items that you can reference by index
 goodJim.addEventListener("mouseover", hailSatan);
 badJim.addEventListener("mouseover", hailSatan);
@@ -21,21 +21,21 @@ function hailSatan() {
     mainHeader.innerText = "LORD SATAN";
     menuHeader.innerText = "SATAN";
     listItems[2].innerText = "Meet Satan";
-    mainContent.className = "main-content-hell";
+    mainContent.id = "main-bg-hell";
   } else {
     goodJim.className = "jim-visible";
     badJim.className = "jim-invisible";
     mainHeader.innerText = "JIMBO OYLE";
     menuHeader.innerText = "JIMBO";
     listItems[2].innerText = "Meet Jim";
-    mainContent.className = "main-content";
+    mainContent.id = "main-bg";
   }
 }
 
 // Renders greeting based on given input text.
 
 function greetingsFromJimbo() {
-  const name = document.getElementById("name").value;
+  const name = document.getElementById("name-input").value;
   const greetingSpace = document.getElementById("greeting");
   greetingSpace.innerText = `hello ${name}, I am jimbo`;
 }

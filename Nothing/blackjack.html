@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="assets/styles/style.css">
     <link rel="stylesheet" href="assets/styles/blackjack.css">
     <script src="assets/scripts/blackjack.js" defer></script>
-    <title>Document</title>
+    <title>JB's BJ</title>
 </head>
 <body>
 
@@ -28,7 +28,7 @@
       </nav>
 
       <!-- Controls all content between Navbar and Footer -->
-      <div class="blackjack-container">
+      <div class="page-container">
 
           <!-- Header -->
           
@@ -38,6 +38,11 @@
             </header>
             
             <main>
+              <section id="ask-to-play">
+                <h3>Would you like to play?</h3>
+                <button class="bj-btn" id="bj-play">HELL YEA</button>
+              </section>
+              <section id="bj-game" class="invisible">
                 <div id="computer-player-output">
                   <!-- <p>You draw a 8.</p>
                   <p>Your total is now 16</p> -->
@@ -45,16 +50,16 @@
 
                 <div class="human-player-input">
                   <h3>What do you want to do?</h3>
-                  <div id="bj-input-buttons"></div>
-                  <button class="bj-btn" id="hit-button">HIT</button>
-                  <button class="bj-btn" id="stay-button">STAY</button>
-                  <button class="bj-btn" id="split-button">SPLIT</button>
-                  <button class="bj-btn" id="ddown-button">D DOWN</button>
-
+                  <button class="bj-btn bj-input" id="hit-button">HIT</button>
+                  <button class="bj-btn bj-input" id="stay-button">STAY</button>
+                  <button class="bj-btn bj-input" id="split-button">SPLIT</button>
+                  <button class="bj-btn bj-input" id="ddown-button">D DOWN</button>
+                 
                   <br>
-
+                  <button class="bj-btn" id="bj-new-game-button">NEW GAME</button>
                   <button class="bj-btn" id="bj-exit-button">EXIT GAME</button>
                 </div>
+              </section>
             </main>
             
     </div>
