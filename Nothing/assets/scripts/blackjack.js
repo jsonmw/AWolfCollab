@@ -1,4 +1,8 @@
+// Static methods for manipulating the GUI of the game
+
 class Gui {
+  // renders the given string in the game screen
+
   static renderOutput(output) {
     const newOutput = document.createElement("p");
     newOutput.innerText = output;
@@ -6,9 +10,13 @@ class Gui {
     newOutput.scrollIntoView({ block: "start", behavior: "smooth" });
   }
 
+  // clears the game screen
+
   static clearOutput() {
     outputScreen.innerHTML = "";
   }
+
+  // enables or disables the input buttons
 
   static toggleButtons() {
     if (gameOn) {
@@ -35,6 +43,7 @@ let jimbo;
 let gameOn = false;
 
 // DOM objects
+
 const playAsker = document.getElementById("ask-to-play");
 const playButton = document.getElementById("bj-play");
 const wholeGame = document.getElementById("bj-game");
@@ -48,6 +57,7 @@ const bjNewGameButton = document.getElementById("bj-new-game-button");
 const bjExitButton = document.getElementById("bj-exit-button");
 
 // Message Constants
+
 const GREETING = "Hello, I am jimbo. Welcome to my BlackJack game.";
 const PLAYER_BUST = "You have busted. Jimbo wins!";
 const STAY_MESSAGE = "You have stayed. Let's see what our guy Jimbo does!";
@@ -59,17 +69,23 @@ const PLAYER_DRAW = "It's tied. You win on a technicality.";
 const PLAYER_LOSES = "JIMBO IS VICTORIOUS!";
 
 // Misc constants
+
 const MAX_VALUE = 21;
 const JIMBO_MAX = 17;
 const SUITS = ["hearts", "spades", "clubs", "diamonds"];
 const FACE_CARDS = ["ace", "king", "queen", "jack"];
 
 // Event Listeners
+
 playButton.addEventListener("click", playButtonHandler);
 hitButton.addEventListener("click", hitButtonHandler);
 stayButton.addEventListener("click", stayButtonHandler);
 bjExitButton.addEventListener("click", exitButtonHandler);
 bjNewGameButton.addEventListener("click", newGameHandler);
+
+// CLASSES \\
+
+// Constructs an individual card
 
 class Card {
   constructor(value, suit) {
@@ -78,6 +94,8 @@ class Card {
     this.dealt = false;
   }
 
+  // Adds one to 0-index and converts to face card string if 10+
+
   convertFace() {
     let faceValue = this.value + 1;
     if (faceValue > 10) {
@@ -85,6 +103,8 @@ class Card {
     }
     return faceValue;
   }
+  // calculates the actual added value of the card in terms of the given player
+  // total score, i.e. if Ace is 11 or 1, converting face cards to 10.
 
   getAddedValue(player) {
     let addedValue;
@@ -104,12 +124,16 @@ class Card {
   }
 }
 
+// holds a deck of 52 cards
+
 class Deck {
   constructor() {
-    this.cards = this.loadDeck();
+    this.cards = this.shuffle();
   }
 
-  loadDeck() {
+  // builds deck and fills with cards
+
+  shuffle() {
     const cards = { hearts: [], spades: [], clubs: [], diamonds: [] };
     for (let suit in cards) {
       for (let i = 0; i < 13; i++) {
@@ -120,23 +144,30 @@ class Deck {
     return cards;
   }
 
+  // returns the card in the current deck with the given value, suit
+
   getCard(value, suit) {
     suit = SUITS[suit];
     suit = this.cards[suit];
     return suit[value];
   }
 
+  // verifies if the given card in the deck has been dealt.
+
   isDealt(card) {
     return card.dealt;
   }
 }
 
-class Player {
+// A blackjackplayer
 
+class Player {
   constructor() {
     this.total = 0;
-    this.hand = [];
+    this.hand = []; // adds cards to the current hand. Useful for split maybe?
   }
+
+  // hits and adds the new card to the running total.
 
   hit() {
     let success = false;
@@ -160,17 +191,27 @@ class Player {
     return card;
   }
 
+  //   Unfinished
+
   split(currentHand) {
     // will need to handle two decks at once and figure out what split means.. or get rid of button
   }
+
+  //  Unfinished
+
+  doubleDown(currentHand) {
+    // not sure I actually even know what this does in blackjack.
+  }
 }
 
-class Jimbo extends Player {
+// Every story needs a bad guy
 
+class Jimbo extends Player {
+  // Executes one complete Jimbo game after the player stops.
   jimboTurn() {
     let jimboHit;
     while (this.total < JIMBO_MAX) {
-      jimboHit = this.hit();
+      setTimeout((jimboHit = this.hit()), 2000);
 
       Gui.renderOutput(
         `Jimbo hits for ${jimboHit.convertFace()}! His total is now ${
@@ -185,8 +226,9 @@ class Jimbo extends Player {
 
     currentGame.determineWinner();
   }
-
 }
+
+// Holds information about the instantiated individual game
 
 class Game {
   constructor() {
@@ -196,18 +238,24 @@ class Game {
     jimbo.hit();
     gameOn = true;
     Gui.toggleButtons();
-    
+
     Gui.renderOutput(GREETING);
     this.displayJimbo();
-}
+  }
+
+  // Checks if given player busted
 
   ifBust(player) {
     return player.total > MAX_VALUE;
   }
 
+  // Checks for blackjack
+
   ifBlackJack(player) {
     return player.total === MAX_VALUE;
   }
+  
+  // Outputs Jimbo's current visible card
 
   displayJimbo() {
     Gui.renderOutput(
@@ -216,6 +264,8 @@ class Game {
       }.`
     );
   }
+
+  // Checks results of game to determine winner
 
   determineWinner() {
     if (
@@ -233,7 +283,7 @@ class Game {
   }
 }
 
-// Event handler functions
+// Event handler functions \\
 
 function playButtonHandler() {
   wholeGame.classList.remove("invisible");
