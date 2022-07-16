@@ -21,14 +21,11 @@ class Gui {
   static toggleButtons() {
     if (gameOn) {
       for (let button of inputButtons) {
-        console.log(button);
         button.classList.remove("faded-input");
       }
     } else {
       for (let button of inputButtons) {
-        console.log(button);
         button.classList.add("faded-input");
-        console.log(button);
       }
     }
   }
@@ -97,30 +94,34 @@ class Card {
   // Adds one to 0-index and converts to face card string if 10+
 
   convertFace() {
-    let faceValue = this.value + 1;
+    let faceValue = this.value + 2;
     if (faceValue > 10) {
-      faceValue = FACE_CARDS[13 - faceValue];
+      console.log("converting a " + faceValue);
+      faceValue = FACE_CARDS[14 - faceValue];
+      console.log("into " + faceValue);
     }
     return faceValue;
   }
-  // calculates the actual added value of the card in terms of the given player
+
+  // Calculates the actual added value of the card in terms of the given player
   // total score, i.e. if Ace is 11 or 1, converting face cards to 10.
 
-  getAddedValue(player) {
+  calculateNewTotal(player) {
     let addedValue;
-
+    console.log("hitting for " + this.value);
     if (this.value < 9) {
-      addedValue = this.value + 1;
-    } else if (this.value > 11) {
-      if (player.total > 10) {
-        addedValue = 1;
-      } else {
-        addedValue = 11;
-      }
+      addedValue = this.value + 2;
+    } else if (this.value === 12) {
+      addedValue = 11;
+      player.hasAce = true;
     } else {
       addedValue = 10;
     }
-    return addedValue;
+    player.total += addedValue;
+
+    if (player.total > 21 && player.hasAce) {
+      player.total -= 10;
+    }
   }
 }
 
@@ -164,6 +165,7 @@ class Deck {
 class Player {
   constructor() {
     this.total = 0;
+    this.hasAce = false;
     this.hand = []; // adds cards to the current hand. Useful for split maybe?
   }
 
@@ -176,14 +178,14 @@ class Player {
     // draws a random card and plays it if not dealt
 
     while (!success) {
-      const value = Math.floor(Math.random() * 13);
+      const value = Math.floor(Math.random() * 13); // how to get a random whole number in javascript
       const suit = Math.floor(Math.random() * 4);
       card = currentDeck.getCard(value, suit);
-
+      console.log(card.value);
       success = !currentDeck.isDealt(card);
 
       if (success) {
-        this.total += card.getAddedValue(this);
+        card.calculateNewTotal(this);
         card.dealt = true;
         this.hand.push(card);
       }
@@ -193,26 +195,32 @@ class Player {
 
   //   Unfinished
 
-//   split(currentHand) {
-//     // will need to handle two decks at once and figure out what split means.. or get rid of button
-//   }
+  //   split(currentHand) {
+  //     // will need to handle two decks at once and figure out what split means.. or get rid of button
+  //   }
 
-//   doubleDown(currentHand) {
-//     // not sure I actually even know what this does in blackjack.
-//   }
+  //   doubleDown(currentHand) {
+  //     // not sure I actually even know what this does in blackjack.
+  //   }
 }
 
 // Every story needs a bad guy
 
 class Jimbo extends Player {
-
   // Executes one complete Jimbo game after the player stops.
 
   jimboTurn() {
-
+    Gui.renderOutput(
+      `Jimbo starts with a ${this.hand[0].convertFace()} of ${
+        this.hand[0].suit
+      } and a
+        ${this.hand[1].convertFace()} of ${
+        this.hand[1].suit
+      }. His starting total is ${this.total}.`
+    );
     let jimboHit;
     while (this.total < JIMBO_MAX) {
-      setTimeout((jimboHit = this.hit()), 2000);
+      jimboHit = this.hit();
 
       Gui.renderOutput(
         `Jimbo hits for ${jimboHit.convertFace()}! His total is now ${
@@ -223,6 +231,8 @@ class Jimbo extends Player {
 
     if (this.total > MAX_VALUE) {
       Gui.renderOutput(JIMBO_BUST);
+    } else if (this.total === MAX_VALUE) {
+        Gui.renderOutput(BLACKJACK);
     }
 
     currentGame.determineWinner();
@@ -232,11 +242,11 @@ class Jimbo extends Player {
 // Holds information about the instantiated individual game
 
 class Game {
-    
   constructor() {
     currentDeck = new Deck();
     human = new Player();
     jimbo = new Jimbo();
+    jimbo.hit();
     jimbo.hit();
     gameOn = true;
     Gui.toggleButtons();
@@ -261,7 +271,7 @@ class Game {
 
   displayJimbo() {
     Gui.renderOutput(
-      `Jimbo is showing ${jimbo.hand[0].convertFace()} of ${
+      `Jimbo is showing ${jimbo.hand[1].convertFace()} of ${
         jimbo.hand[0].suit
       }.`
     );

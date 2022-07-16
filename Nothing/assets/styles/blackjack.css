@@ -84,13 +84,13 @@ header {
 }
 
 #bj-exit-button {
-  margin-top: 4rem auto;
+  margin-top: 4rem 0;
   height: 4rem;
   width: 6rem;
 }
 
 #bj-new-game-button {
-  margin: 4rem auto;
+  margin: 4rem 0;
   height: 4rem;
   width: 6rem;
 }
