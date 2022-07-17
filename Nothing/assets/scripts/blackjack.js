@@ -249,11 +249,29 @@ class Game {
     jimbo = new Jimbo();
     jimbo.hit();
     jimbo.hit();
+    human.hit();
+    human.hit();
     gameOn = true;
     Gui.toggleButtons();
-
+    
     Gui.renderOutput(GREETING);
+    this.startingHand();
     this.displayJimbo();
+  }
+
+  startingHand() {
+    Gui.renderOutput(
+        `You start with a ${human.hand[0].convertFace()} of ${
+          human.hand[0].suit
+        } and a
+          ${human.hand[1].convertFace()} of ${
+          human.hand[1].suit
+        }. Your starting total is ${human.total}.`
+      );
+
+      if(this.ifBlackJack(human)) {
+        this.determineWinner();
+      }
   }
 
   // Checks if given player busted
