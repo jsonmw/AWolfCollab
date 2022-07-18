@@ -152,7 +152,13 @@ header {
 
 #bj-bet-input:focus {
   border: 1px solid  white;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+}
+
+#bj-bet-input.bj-bet-saved,
+#bj-bet-input.bj-bet-saved:focus {
+  border: none;
+  font-size: 1.5rem;
 }
 
 .new-exit-bj {

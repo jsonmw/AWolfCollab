@@ -1,7 +1,6 @@
-// Static methods for manipulating the GUI of the game
+// Static methods for manipulating the GUI of the game \\
 
 class Gui {
-
   // Renders the given string in the game screen
 
   static renderOutput(...outputs) {
@@ -14,6 +13,7 @@ class Gui {
 
     Gui.renderScore();
     Gui.renderMoney();
+    Gui.renderBet();
     this.toggleAllGameButtons();
   }
 
@@ -41,7 +41,18 @@ class Gui {
     jimboScore.appendChild(jimboOutput);
   }
 
-    //   Renders the funds screen 
+  // Renders the bet in the current bet screen
+
+  static renderBet() {
+    if (human) {
+      console.log("displaying " + human.currentBet);
+      bjBetEntry.value = `$ ${human.currentBet}`;
+    } else {
+      bjBetEntry.value = `$ ${MIN_BET}`;
+    }
+  }
+
+  //   Renders the funds screen
 
   static renderMoney() {
     if (currentMoney.hasChildNodes()) {
@@ -56,13 +67,13 @@ class Gui {
     currentMoney.appendChild(moneyOutput);
   }
 
-  // clears the game screen
+  // Clears the game output screen
 
   static clearOutput() {
     outputScreen.innerHTML = "";
   }
 
-  // enables or disables the input buttons
+  // Enables or disables the input buttons
 
   static toggleAllGameButtons() {
     Gui.toggleHitButton();
@@ -71,6 +82,21 @@ class Gui {
     Gui.toggledDDown();
     Gui.toggleNewPlayerButton();
     Gui.toggleNewGameButton();
+    Gui.toggleBetButton();
+  }
+
+  // Individual button toggles
+
+  static toggleBetButton() {
+    if (gameOn || !human) {
+      bjBetButton.classList.add("faded-input");
+      bjBetEntry.classList.add("bj-bet-saved");
+      bjBetEntry.setAttribute("disabled", "disabled");
+    } else {
+      bjBetButton.classList.remove("faded-input");
+      bjBetEntry.classList.remove("bj-bet-saved");
+      bjBetEntry.removeAttribute("disabled");
+    }
   }
 
   static toggleHitButton() {
@@ -90,7 +116,13 @@ class Gui {
   }
 
   static toggleSplit() {
-    if (human.hand.length == 2 && human.hand[0].value === human.hand[1].value) {
+    if (
+      human &&
+      human.cards &&
+      human.hands[length - 1].cards.length == 3 &&
+      human.hands[length - 1].cards[1].value ===
+        human.hands[length - 1].cards[2].value
+    ) {
       splitButton.classList.remove("faded-input");
     } else {
       splitButton.classList.add("faded-input");
@@ -98,7 +130,11 @@ class Gui {
   }
 
   static toggledDDown() {
-    if (human.hand.length === 2) {
+    if (
+      gameOn &&
+      human.hands.length > 0 &&
+      human.hands[length].cards.length === 2
+    ) {
       ddownButton.classList.remove("faded-input");
       this.canDouble = true;
     } else {
@@ -112,14 +148,13 @@ class Gui {
       bjNewPlayerButton.classList.remove("faded-input");
     } else {
       bjNewPlayerButton.classList.add("faded-input");
-      bjNewGameButton.classList.remove('faded-input');
+      bjNewGameButton.classList.remove("faded-input");
     }
   }
 
   static toggleNewGameButton() {
-
-    if(!human || human.wallet < 1) {
-        bjNewGameButton.classList.add("faded-input");
+    if (!human || human.wallet < 1) {
+      bjNewGameButton.classList.add("faded-input");
     }
     if (gameOn) {
       bjNewGameButton.classList.add("invisible");
@@ -128,13 +163,12 @@ class Gui {
       bjNewGameButton.classList.remove("invisible");
       hitButton.classList.add("invisible");
     }
-        
   }
 }
 
-// ----------------------------------------------------- \\
+// -------------------UTILITY--------------------- \\
 
-// global variables
+// Global variables
 
 let currentGame;
 let currentDeck;
@@ -152,6 +186,8 @@ const bjScores = document.getElementById("bj-scores");
 const humanScore = document.getElementById("human-score");
 const jimboScore = document.getElementById("jimbo-score");
 const currentMoney = document.getElementById("money-box");
+const bjBetEntry = document.getElementById("bj-bet-input");
+const bjBetButton = document.getElementById("bet-changer");
 const playerInput = document.getElementById("human-player-input");
 const hitButton = document.getElementById("hit-button");
 const stayButton = document.getElementById("stay-button");
@@ -162,11 +198,22 @@ const bjNewPlayerButton = document.getElementById("bj-new-player-button");
 const bjNewGameButton = document.getElementById("bj-new-game-button");
 const bjExitButton = document.getElementById("bj-exit-button");
 
+// Misc constants
+
+const MAX_VALUE = 21;
+const JIMBO_MAX = 17;
+const STARTING_FUNDS = 1500;
+const MIN_BET = 25;
+const SUITS = ["hearts", "spades", "clubs", "diamonds"];
+const FACE_CARDS = ["ace", "king", "queen", "jack"];
+
 // Message Constants
 
 const SPACING = `-------------------------------------------
     `;
 const GREETING = "Hello, I am jimbo. Welcome to my BlackJack game.";
+const BET_SUCCESS = `Jimbo drools at your new bet of `;
+const BET_FAIL = "Jimbo groans audibly -- Try a valid bet!";
 const PLAYER_BUST = "You have busted. Great idea to hit, dingus!";
 const STAY_MESSAGE = "You have stayed. Let's see what our guy Jimbo does!";
 const JIMBO_BUST = "Oh no! Jimbo BUSTED! FUCK!";
@@ -178,27 +225,23 @@ const PLAYER_LOSES = `JIMBO IS VICTORIOUS!`;
 const JIMBO_INSULT_BROKE =
   "Yeah right pal, not with that scuz. Jimbo beckons you to the mines!";
 const JIMBO_INSULT_DDOWN = `You? Double down? You're too poor!! No one wants to work in the mines anymore!`;
-
-// Misc constants
-
-const MAX_VALUE = 21;
-const JIMBO_MAX = 17;
-const STARTING_FUNDS = 150;
-const BET = 100;
-const SUITS = ["hearts", "spades", "clubs", "diamonds"];
-const FACE_CARDS = ["ace", "king", "queen", "jack"];
+const JIMBO_INSULT_ISF =
+  "Jimbo shrieks from deep within the mine! You don't have enough money for that bet!";
+const JIMBO_INSULT_MIN_BET = `Jimbo points to a sign on the wall that says, "MINIMUM BET IS $${MIN_BET}".`;
 
 // Event Listeners
 
+bjBetButton.addEventListener("click", betButtonHandler);
 playButton.addEventListener("click", playButtonHandler);
 hitButton.addEventListener("click", hitButtonHandler);
 stayButton.addEventListener("click", stayButtonHandler);
+splitButton.addEventListener("click", splitButtonHandler);
 ddownButton.addEventListener("click", ddownButtonHandler);
 bjExitButton.addEventListener("click", exitButtonHandler);
 bjNewGameButton.addEventListener("click", newGameHandler);
 bjNewPlayerButton.addEventListener("click", newPlayerHandler);
 
-// CLASSES \\
+// -------------------CLASSES--------------------- \\
 
 // Constructs an individual card
 
@@ -224,22 +267,22 @@ class Card {
   // Calculates the actual added value of the card in terms of the given player
   // total score, i.e. if Ace is 11 or 1, converting face cards to 10.
 
-  calculateNewTotal(player) {
+  calculateNewTotal (hand) {
     let addedValue;
     console.log("hitting for " + this.value);
     if (this.value < 10) {
       addedValue = this.value;
     } else if (this.value === 14) {
       addedValue = 11;
-      player.hasAce = true;
+      hand.hasAce = true;
     } else {
       addedValue = 10;
     }
-    player.total += addedValue;
+    hand.total += addedValue;
 
-    if (player.total > 21 && player.hasAce && !player.usedAce) {
-      player.total -= 10;
-      player.hasAce = false;
+    if (handtotal > 21 && hand.hasAce && !hand.usedAce) {
+      hand.total -= 10;
+      hand.hasAce = false;
     }
   }
 }
@@ -279,22 +322,28 @@ class Deck {
   }
 }
 
-// A blackjackplayer
+class Hand {
+  constructor(...cards) {
+    this.cards = [...cards];
+    this.total = 0;
+  }
+}
+// A blackjack player
 
 class Player {
   constructor() {
+    // game specific
+
     this.total = 0;
     this.hasAce = false;
-    this.hand = []; // adds cards to the current hand. Useful for split maybe?
-    this.hands = [this.hand];
-    if (STARTING_FUNDS >= BET) {
-      this.currentBet = BET;
-    } else {
-      this.currentBet = STARTING_FUNDS;
-    }
+    // this.hand = []; // adds cards to the current hand. Useful for split maybe?
+    this.hands = [];
+    this.handsLeft;
+    this.currentBet = MIN_BET;
     this.doubled = false;
+    this.usedSplit = false;
 
-    // persistent
+    // persistent between games
 
     this.wallet = STARTING_FUNDS;
     this.wins = 0;
@@ -305,7 +354,18 @@ class Player {
 
   // hits and adds the new card to the running total.
 
-  hit() {
+  newHand() {
+    const newHand = new Hand();
+    console.log("new hand = ");
+    console.log(newHand);
+    this.hit(newHand);
+    this.hit(newHand);
+    // newHand.total = newHand.cards[0].value + newHand.cards[1].value;
+    this.handsLeft++;
+    return newHand;
+  }
+
+  hit(givenHand) {
     let success = false;
     let card;
 
@@ -315,13 +375,13 @@ class Player {
       const value = Math.floor(Math.random() * 13) + 2; // how to get a random whole number in javascript
       const suit = Math.floor(Math.random() * 4);
       card = currentDeck.getCard(value, suit);
-      console.log(card.value);
+      // console.log(card.value);
       success = !currentDeck.isDealt(card);
 
       if (success) {
-        card.calculateNewTotal(this);
+        card.calculateNewTotal(this, givenHand);
         card.dealt = true;
-        this.hand.push(card);
+        givenHand.cards.push(card);
       }
     }
     return card;
@@ -329,9 +389,14 @@ class Player {
 
   //   Unfinished
 
-  //   split(currentHand) {
-  //     // will need to handle two decks at once and figure out what split means.. or get rid of button
-  //   }
+  split() {
+    const hand2 = new Hand();
+    hand2.push(this.hands[length - 1].cards[1].pop());
+    this.hands.push[hand2];
+    this.usedSplit = true;
+  }
+
+  // Doubles current bet but allows for only one more hit.
 
   doubleDown() {
     Gui.toggledDDown();
@@ -342,13 +407,14 @@ class Player {
     return false;
   }
 
+  // Resets values to original data
+
   clearGameSpecific() {
     this.total = 0;
     this.hasAce = false;
-    this.hand = [];
     this.hands = [];
-    this.currentBet = BET;
     this.doubled = false;
+    currentDeck = new Deck();
   }
 }
 
@@ -360,11 +426,11 @@ class Jimbo extends Player {
   jimboTurn() {
     this.total += jimbo.hand[0].value;
     Gui.renderOutput(
-      `Jimbo starts with a ${this.hand[0].convertFace()} of ${
+      `Jimbo starts with a ${this.hands[0].cards[0].convertFace()} of ${
         this.hand[0].suit
       } and a
-        ${this.hand[1].convertFace()} of ${
-        this.hand[1].suit
+        ${this.hands[1].cards[0].convertFace()} of ${
+        this.hands[1].cards[0].suit
       }. His starting total is ${this.total}.`,
       SPACING
     );
@@ -385,7 +451,7 @@ class Jimbo extends Player {
       );
     }
 
-    if (this.total === MAX_VALUE && this.hand.length === 2) {
+    if (this.total === MAX_VALUE && this.hand.cards.length === 2) {
       Gui.renderOutput(BLACKJACK);
     }
 
@@ -393,22 +459,17 @@ class Jimbo extends Player {
   }
 }
 
-// Holds information about the instantiated individual game
+// Holds information about an active game
 
 class Game {
   constructor() {
-    currentDeck = new Deck();
+    this.hasSplit = false;
 
     human.clearGameSpecific();
-    if (human.currentBet > human.wallet) {
-      human.currentBet = human.wallet;
-    }
 
     jimbo = new Jimbo();
-    jimbo.hit();
-    jimbo.hit();
-    human.hit();
-    human.hit();
+    jimbo.hands[length] = jimbo.newHand();
+    human.hands[length] = human.newHand();
     gameOn = true;
 
     Gui.toggleAllGameButtons();
@@ -421,25 +482,36 @@ class Game {
     }
   }
 
+  // Displays the starting hand text and checks for player BlackJack
+
   startingHand() {
     Gui.renderOutput(
-      `You start with a ${human.hand[0].convertFace()} of ${
-        human.hand[0].suit
-      } and a
-          ${human.hand[1].convertFace()} of ${
-        human.hand[1].suit
-      }. Your starting total is ${human.total}.`
+      `You start with a ${human.hands[length].cards[0].convertFace()} of ${
+        human.hands[length].cards[0].suit
+      } and a ${human.hands[length].cards[1].convertFace()} of ${
+        human.hands[length].cards[1].suit
+      }. Your starting total is ${human.hands[length].total}.`
     );
 
-    if (this.ifBlackJack(human)) {
-      if (human.wallet >= human.currentBet * 1.5) {
-        human.currentBet *= 1.5;
+    // this.hasSplit = split();
 
-      } else {
-        human.currentBet = human.wallet;
-      }
+    if (this.ifBlackJack(human)) {
+      const originalBet = human.currentBet;
+      human.currentBet *= 1.5;
       Gui.renderOutput(BLACKJACK);
       this.determineWinner();
+      human.currentBet = originalBet; // resets bet after hand
+    }
+
+    if (this.hasSplit) {
+      // const stringVersion = ['one', 'two'];
+      // for(hand in human.hands) {
+      //   renderOutput(`Playing hand ${stringVersion[human.hands.indexOf(hand)]}: `)
+      //   this.startingHand();
+      // }
+      // if (gameOn) {
+      //   this.displayJimbo();
+      // }
     }
   }
 
@@ -452,20 +524,20 @@ class Game {
   // Checks for blackjack
 
   ifBlackJack(player) {
-    return player.total === MAX_VALUE && player.hand.length === 2;
+    return player.total === MAX_VALUE && player.hands[length].length === 2;
   }
 
   // Outputs Jimbo's current visible card
 
   displayJimbo() {
     if (jimbo.total === MAX_VALUE) {
-      Gui.renderOutput("Just a sec... looks like Jimbo has a ");
+      Gui.renderOutput("Just a sec... looks like Jimbo has a...");
       Gui.renderOutput(BLACKJACK);
       this.determineWinner();
       return;
     }
 
-    jimbo.total = jimbo.hand[1].value;
+    jimbo.total = jimbo.hands[length].cards[1].value;
 
     if (jimbo.total == 14) {
       jimbo.total = 11; // only display shown card in total
@@ -474,8 +546,8 @@ class Game {
     }
 
     Gui.renderOutput(
-      `Jimbo is showing ${jimbo.hand[1].convertFace()} of ${
-        jimbo.hand[0].suit
+      `Jimbo is showing ${jimbo.hands[length].cards[1].convertFace()} of ${
+        jimbo.hands[length].cards[1].suit
       }.`,
       SPACING
     );
@@ -501,15 +573,42 @@ class Game {
         SPACING
       );
     }
+    if (human.doubled) {
+      human.currentBet /= 2;
+    }
     gameOn = false;
     Gui.toggleAllGameButtons();
     Gui.toggleNewGameButton();
   }
 }
 
-// Event handler functions \\
+// -------------------HANDLERS--------------------- \\
+
+function betButtonHandler() {
+  if (human && !gameOn) {
+    let betValue = bjBetEntry.value.trim().replace("$", "").replace(",", ""); // scrubs input
+    betValue = +betValue; // parses int
+
+    // validates entered text was a number or gives appropriate insult
+
+    if (!isNaN(betValue) && betValue <= human.wallet) {
+      if (betValue >= MIN_BET) {
+        human.currentBet = betValue;
+        Gui.renderOutput(`${BET_SUCCESS}${human.currentBet}!`, SPACING);
+      } else {
+        Gui.renderOutput(JIMBO_INSULT_MIN_BET, SPACING);
+      }
+    } else {
+      Gui.clearOutput();
+      Gui.renderOutput(JIMBO_INSULT_ISF, SPACING);
+      Gui.renderBet();
+      Gui.renderOutput(`Try something you can afford. Like ${human.wallet}!`);
+    }
+  }
+}
 
 function playButtonHandler() {
+  currentDeck = new Deck();
   textGame.classList.remove("invisible");
   playAsker.classList.add("invisible");
   Gui.renderOutput(GREETING, SPACING);
@@ -518,6 +617,9 @@ function playButtonHandler() {
 function exitButtonHandler() {
   textGame.classList.add("invisible");
   playAsker.classList.remove("invisible");
+
+  // Wipes current game data
+
   human = undefined;
   jimbo = undefined;
   gameOn = false;
@@ -538,23 +640,27 @@ function newPlayerHandler() {
 }
 
 function newGameHandler() {
-  if (!gameOn && human && human.wallet === 0) {
+  if (!gameOn && human) {
     Gui.clearOutput();
-    Gui.renderOutput(JIMBO_INSULT_BROKE, SPACING);
-    human = undefined;
-    Gui.toggleNewPlayerButton();
-  } else if (!gameOn && human) {
-    Gui.clearOutput();
-    currentGame = new Game();
+    if (human.wallet === 0) {
+      Gui.renderOutput(JIMBO_INSULT_BROKE, SPACING);
+      human = undefined;
+      Gui.toggleNewPlayerButton();
+    } else if (human.wallet < human.currentBet) {
+      Gui.renderOutput(JIMBO_INSULT_ISF, SPACING);
+    } else {
+      human.newHand();
+      currentGame = new Game();
+    }
   }
 }
 
 function hitButtonHandler() {
   if (gameOn && !human.doubled) {
-    const hitCard = human.hit();
+    const hitCard = human.hit(human.hands[length]);
     Gui.toggledDDown();
     Gui.renderOutput(
-      `You hit for ${hitCard.convertFace()}! Your total is now ${human.total}.`,
+      `You hit for ${hitCard.convertFace()}! Your total is now ${human.hands[length].total}.`,
       SPACING
     );
 
@@ -572,7 +678,20 @@ function hitButtonHandler() {
 function stayButtonHandler() {
   if (gameOn) {
     Gui.renderOutput(STAY_MESSAGE, SPACING);
-    jimbo.jimboTurn();
+    human.handsLeft--;
+    if (human.handsLeft === 0) {
+      jimbo.jimboTurn();
+    }
+  }
+}
+
+function splitButtonHandler() {
+  if (
+    human &&
+    human.hand.length == 2 &&
+    human.hand[0].value === human.hand[1].value
+  ) {
+    human.split();
   }
 }
 
