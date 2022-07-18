@@ -1,6 +1,7 @@
 :root {
   --screen-color: lime;
   --output-color: #333;
+  --hover-color: rgb(20, 69, 109);
 }
 
 body {
@@ -75,18 +76,13 @@ header {
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  height: 1rem;
+  max-height: 1rem;
 }
 
 .score-box {
   text-align: center;
   width: 5rem;
-  justify-content: center;
-  align-items: center;
 }
-
-/* Player Money Display */
-
 
 #bj-display-box-title {
   font-size: .75rem;
@@ -115,33 +111,65 @@ header {
   font-weight: bold;
   background: #f4f4f4;
   transition: all .1s ease-in;
+  cursor: pointer;
 }
 
 .bj-btn:hover {
   transform: scale(1.5);
-  background: #333;
+  background: var(--hover-color);
+  color: #fff;
+  opacity: 0.9;
+  border: 1px solid #333;
 }
 
 .faded-input {
   opacity: 0.6;
-  transition: all 0s;
+}
+
+/* Bet Changing Button */
+
+#enter-bet-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+#bj-bet-input {
+  background-color: black;
+  border: 1px solid  white;
+  padding: 0.2rem;
+  /* border: none; */
+  width: 7rem;
+  color: white;
+  text-align: center;
+  border-radius: 5rem;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  margin-top: .5rem;
+}
+
+#bj-bet-input:focus {
+  border: 1px solid  white;
+  font-size: 1.2rem;
+}
+
+.new-exit-bj {
+  margin-top: 2rem 0 rem;
+  height: 2rem;
+  width: 6.3rem;
+}
+.new-exit-bj:hover {
+  transform: scale(1.2);
 }
 
 .faded-input:hover {
-  opacity: 0.4;
+  opacity: 0.6;
   background: #f4f4f4;
-}
-
-#bj-exit-button {
-  margin-top: 2rem 0 0 rem;
-  height: 4rem;
-  width: 6rem;
-}
-
-#bj-new-game-button {
-  margin: 2rem 0 0rem;
-  height: 4rem;
-  width: 6rem;
+  color: #333;
+  transform: none;
+  border: 1px solid #333;
 }
 
 #ask-to-play {

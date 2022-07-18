@@ -1,7 +1,8 @@
 // Static methods for manipulating the GUI of the game
 
 class Gui {
-  // renders the given string in the game screen
+
+  // Renders the given string in the game screen
 
   static renderOutput(...outputs) {
     for (const output of outputs) {
@@ -13,9 +14,10 @@ class Gui {
 
     Gui.renderScore();
     Gui.renderMoney();
+    this.toggleAllGameButtons();
   }
 
-  //  renders score in score boxes
+  //  Renders score in score boxes
 
   static renderScore() {
     if (humanScore.hasChildNodes()) {
@@ -25,21 +27,32 @@ class Gui {
       jimboScore.removeChild(jimboScore.firstChild);
     }
 
-    const humanOutput = document.createElement("p");
-    humanOutput.innerText = `${human.total}`;
-    const jimboOutput = document.createElement("p");
-    jimboOutput.innerText = `${jimbo.total}`;
+    let humanOutput = document.createElement("p");
+    let jimboOutput = document.createElement("p");
+    if (gameOn) {
+      humanOutput.innerText = `${human.total}`;
+      jimboOutput.innerText = `${jimbo.total}`;
+    } else {
+      humanOutput.innerText = "0";
+      jimboOutput.innerText = "0";
+    }
 
     humanScore.appendChild(humanOutput);
     jimboScore.appendChild(jimboOutput);
   }
 
+    //   Renders the funds screen 
+
   static renderMoney() {
     if (currentMoney.hasChildNodes()) {
       currentMoney.removeChild(currentMoney.firstChild);
     }
-    const moneyOutput = document.createElement("p");
-    moneyOutput.innerText = `\$ ${human.wallet}`;
+    let moneyOutput = document.createElement("p");
+    if (human) {
+      moneyOutput.innerText = `\$ ${human.wallet}`;
+    } else {
+      moneyOutput.innerText = "$ 0";
+    }
     currentMoney.appendChild(moneyOutput);
   }
 
@@ -51,16 +64,29 @@ class Gui {
 
   // enables or disables the input buttons
 
-  static toggleHitStayButtons() {
-    if (gameOn) {
-      hitButton.classList.remove("faded-input");
-      stayButton.classList.remove("faded-input");
-    } else {
-      hitButton.classList.add("faded-input");
-      stayButton.classList.add("faded-input");
-    }
+  static toggleAllGameButtons() {
+    Gui.toggleHitButton();
+    Gui.toggleStayButton();
     Gui.toggleSplit();
     Gui.toggledDDown();
+    Gui.toggleNewPlayerButton();
+    Gui.toggleNewGameButton();
+  }
+
+  static toggleHitButton() {
+    if (gameOn && !human.doubled) {
+      hitButton.classList.remove("faded-input");
+    } else {
+      hitButton.classList.add("faded-input");
+    }
+  }
+
+  static toggleStayButton() {
+    if (gameOn) {
+      stayButton.classList.remove("faded-input");
+    } else {
+      stayButton.classList.add("faded-input");
+    }
   }
 
   static toggleSplit() {
@@ -72,25 +98,44 @@ class Gui {
   }
 
   static toggledDDown() {
-    if (human.hand.length == 2) {
+    if (human.hand.length === 2) {
       ddownButton.classList.remove("faded-input");
+      this.canDouble = true;
     } else {
+      this.canDouble = false;
       ddownButton.classList.add("faded-input");
     }
   }
 
-  static toggleNewGameButton() {
-    if(gameOn) {
-      bjNewGameButton.classList.add("faded-input");
+  static toggleNewPlayerButton() {
+    if (!human) {
+      bjNewPlayerButton.classList.remove("faded-input");
     } else {
-      bjNewGameButton.classList.remove("faded-input");
+      bjNewPlayerButton.classList.add("faded-input");
+      bjNewGameButton.classList.remove('faded-input');
     }
-  } 
+  }
+
+  static toggleNewGameButton() {
+
+    if(!human || human.wallet < 1) {
+        bjNewGameButton.classList.add("faded-input");
+    }
+    if (gameOn) {
+      bjNewGameButton.classList.add("invisible");
+      hitButton.classList.remove("invisible");
+    } else {
+      bjNewGameButton.classList.remove("invisible");
+      hitButton.classList.add("invisible");
+    }
+        
+  }
 }
+
+// ----------------------------------------------------- \\
 
 // global variables
 
-// let wallet = 1000;
 let currentGame;
 let currentDeck;
 let human;
@@ -113,6 +158,7 @@ const stayButton = document.getElementById("stay-button");
 const splitButton = document.getElementById("split-button");
 const ddownButton = document.getElementById("ddown-button");
 const inputButtons = document.querySelectorAll(".bj-input");
+const bjNewPlayerButton = document.getElementById("bj-new-player-button");
 const bjNewGameButton = document.getElementById("bj-new-game-button");
 const bjExitButton = document.getElementById("bj-exit-button");
 
@@ -129,11 +175,16 @@ const GAME_OVER = "The game has ended";
 const PLAYER_WINS = `Congratulations! You have defeated Jimbo!`;
 const PLAYER_DRAW = `It's tied. Jimbo falls back to sleep.`;
 const PLAYER_LOSES = `JIMBO IS VICTORIOUS!`;
+const JIMBO_INSULT_BROKE =
+  "Yeah right pal, not with that scuz. Jimbo beckons you to the mines!";
+const JIMBO_INSULT_DDOWN = `You? Double down? You're too poor!! No one wants to work in the mines anymore!`;
 
 // Misc constants
 
 const MAX_VALUE = 21;
 const JIMBO_MAX = 17;
+const STARTING_FUNDS = 150;
+const BET = 100;
 const SUITS = ["hearts", "spades", "clubs", "diamonds"];
 const FACE_CARDS = ["ace", "king", "queen", "jack"];
 
@@ -142,8 +193,10 @@ const FACE_CARDS = ["ace", "king", "queen", "jack"];
 playButton.addEventListener("click", playButtonHandler);
 hitButton.addEventListener("click", hitButtonHandler);
 stayButton.addEventListener("click", stayButtonHandler);
+ddownButton.addEventListener("click", ddownButtonHandler);
 bjExitButton.addEventListener("click", exitButtonHandler);
 bjNewGameButton.addEventListener("click", newGameHandler);
+bjNewPlayerButton.addEventListener("click", newPlayerHandler);
 
 // CLASSES \\
 
@@ -174,7 +227,7 @@ class Card {
   calculateNewTotal(player) {
     let addedValue;
     console.log("hitting for " + this.value);
-    if (this.value < 11) {
+    if (this.value < 10) {
       addedValue = this.value;
     } else if (this.value === 14) {
       addedValue = 11;
@@ -184,8 +237,9 @@ class Card {
     }
     player.total += addedValue;
 
-    if (player.total > 21 && player.hasAce) {
+    if (player.total > 21 && player.hasAce && !player.usedAce) {
       player.total -= 10;
+      player.hasAce = false;
     }
   }
 }
@@ -232,10 +286,17 @@ class Player {
     this.total = 0;
     this.hasAce = false;
     this.hand = []; // adds cards to the current hand. Useful for split maybe?
+    this.hands = [this.hand];
+    if (STARTING_FUNDS >= BET) {
+      this.currentBet = BET;
+    } else {
+      this.currentBet = STARTING_FUNDS;
+    }
+    this.doubled = false;
 
     // persistent
 
-    this.wallet = 1000;
+    this.wallet = STARTING_FUNDS;
     this.wins = 0;
     this.losse = 0;
     this.ties = 0;
@@ -266,21 +327,29 @@ class Player {
     return card;
   }
 
-  clearGame() {
-    this.total = 0;
-    this.hasAce = 0;
-    this.hand = [];
-  }
-
   //   Unfinished
 
   //   split(currentHand) {
   //     // will need to handle two decks at once and figure out what split means.. or get rid of button
   //   }
 
-  //   doubleDown(currentHand) {
-  //     // not sure I actually even know what this does in blackjack.
-  //   }
+  doubleDown() {
+    Gui.toggledDDown();
+    if (this.wallet >= this.currentBet * 2) {
+      this.currentBet *= 2;
+      return true;
+    }
+    return false;
+  }
+
+  clearGameSpecific() {
+    this.total = 0;
+    this.hasAce = false;
+    this.hand = [];
+    this.hands = [];
+    this.currentBet = BET;
+    this.doubled = false;
+  }
 }
 
 // Every story needs a bad guy
@@ -301,7 +370,7 @@ class Jimbo extends Player {
     );
 
     let jimboHit;
-    while (this.total < JIMBO_MAX) {
+    while (this.total < JIMBO_MAX && this.total < human.total) {
       if (this.total > MAX_VALUE) {
         Gui.renderOutput(JIMBO_BUST);
         break;
@@ -316,12 +385,7 @@ class Jimbo extends Player {
       );
     }
 
-    if (this.total < MAX_VALUE) {
-      Gui.renderOutput(
-        `Jimbo stays.
-          `
-      );
-    } else if (this.total === MAX_VALUE) {
+    if (this.total === MAX_VALUE && this.hand.length === 2) {
       Gui.renderOutput(BLACKJACK);
     }
 
@@ -334,10 +398,10 @@ class Jimbo extends Player {
 class Game {
   constructor() {
     currentDeck = new Deck();
-    if (!human) {
-      human = new Player();
-    } else {
-      human.clearGame();
+
+    human.clearGameSpecific();
+    if (human.currentBet > human.wallet) {
+      human.currentBet = human.wallet;
     }
 
     jimbo = new Jimbo();
@@ -347,7 +411,7 @@ class Game {
     human.hit();
     gameOn = true;
 
-    Gui.toggleHitStayButtons();
+    Gui.toggleAllGameButtons();
     Gui.toggleNewGameButton();
     Gui.renderMoney();
 
@@ -368,6 +432,12 @@ class Game {
     );
 
     if (this.ifBlackJack(human)) {
+      if (human.wallet >= human.currentBet * 1.5) {
+        human.currentBet *= 1.5;
+
+      } else {
+        human.currentBet = human.wallet;
+      }
       Gui.renderOutput(BLACKJACK);
       this.determineWinner();
     }
@@ -382,13 +452,14 @@ class Game {
   // Checks for blackjack
 
   ifBlackJack(player) {
-    return player.total === MAX_VALUE;
+    return player.total === MAX_VALUE && player.hand.length === 2;
   }
 
   // Outputs Jimbo's current visible card
 
   displayJimbo() {
     if (jimbo.total === MAX_VALUE) {
+      Gui.renderOutput("Just a sec... looks like Jimbo has a ");
       Gui.renderOutput(BLACKJACK);
       this.determineWinner();
       return;
@@ -417,16 +488,21 @@ class Game {
       (human.total > jimbo.total && !(human.total > MAX_VALUE)) ||
       (jimbo.total > MAX_VALUE && human.total <= MAX_VALUE)
     ) {
-      human.wallet += 100;
+      human.wallet += human.currentBet;
       Gui.renderOutput(PLAYER_WINS);
+      Gui.renderOutput(`You have won \$${human.currentBet}!`, SPACING);
     } else if (human.total === jimbo.total) {
-      Gui.renderOutput(PLAYER_DRAW);
+      Gui.renderOutput(PLAYER_DRAW, SPACING);
     } else {
-      human.wallet -= 100;
+      human.wallet -= human.currentBet;
       Gui.renderOutput(PLAYER_LOSES);
+      Gui.renderOutput(
+        `Jimbo slurps up \$ ${human.currentBet} from your wallet!`,
+        SPACING
+      );
     }
     gameOn = false;
-    Gui.toggleHitStayButtons();
+    Gui.toggleAllGameButtons();
     Gui.toggleNewGameButton();
   }
 }
@@ -437,28 +513,46 @@ function playButtonHandler() {
   textGame.classList.remove("invisible");
   playAsker.classList.add("invisible");
   Gui.renderOutput(GREETING, SPACING);
-  // Gui.toggleHitStayButtons();
-  // gameOn = true;
-  // Gui.toggleHitStayButtons();
 }
 
 function exitButtonHandler() {
   textGame.classList.add("invisible");
   playAsker.classList.remove("invisible");
-  human = null;
-  jimbo = null;
+  human = undefined;
+  jimbo = undefined;
+  gameOn = false;
   Gui.clearOutput();
+  Gui.renderMoney();
+  Gui.toggleNewPlayerButton();
+  Gui.toggleNewGameButton();
+}
+
+function newPlayerHandler() {
+  if (!human) {
+    Gui.clearOutput();
+    human = new Player();
+    Gui.renderOutput(GREETING, SPACING);
+    Gui.toggleNewPlayerButton();
+    Gui.toggleNewGameButton();
+  }
 }
 
 function newGameHandler() {
-    Gui.clearOutput(); 
+  if (!gameOn && human && human.wallet === 0) {
+    Gui.clearOutput();
+    Gui.renderOutput(JIMBO_INSULT_BROKE, SPACING);
+    human = undefined;
+    Gui.toggleNewPlayerButton();
+  } else if (!gameOn && human) {
+    Gui.clearOutput();
     currentGame = new Game();
+  }
 }
 
 function hitButtonHandler() {
-  if (gameOn) {
+  if (gameOn && !human.doubled) {
     const hitCard = human.hit();
-
+    Gui.toggledDDown();
     Gui.renderOutput(
       `You hit for ${hitCard.convertFace()}! Your total is now ${human.total}.`,
       SPACING
@@ -471,14 +565,28 @@ function hitButtonHandler() {
       Gui.renderOutput(BLACKJACK);
       currentGame.determineWinner();
     }
-  } else {
-    stayButtonHandler();
   }
+  Gui.toggleHitButton();
 }
 
 function stayButtonHandler() {
   if (gameOn) {
     Gui.renderOutput(STAY_MESSAGE, SPACING);
     jimbo.jimboTurn();
+  }
+}
+
+function ddownButtonHandler() {
+  if (human.doubleDown()) {
+    Gui.renderOutput(
+      `You have doubled down! 
+        Your current bet is now \$ ${human.currentBet}.`,
+      SPACING
+    );
+    hitButtonHandler();
+    human.doubled = true;
+    Gui.toggleHitButton();
+  } else {
+    Gui.renderOutput(JIMBO_INSULT_DDOWN, SPACING);
   }
 }
