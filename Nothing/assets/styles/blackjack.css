@@ -4,15 +4,21 @@
 }
 
 body {
-  overflow: hidden;
+  overflow: scroll;
   font-family: 'Roboto', sans-serif;
+}
+#body::-webkit-scrollbar {
+  display: none;
 }
 
 header {
   display: flex;
+  size: 5rem;
+  font-weight: bold;
+  letter-spacing: .5rem;
   justify-content: center;
   align-items: center;
-  margin-bottom: 5rem;
+  /* margin-bottom: 2rem; */
 }
 
 /* Game visibility */
@@ -23,35 +29,78 @@ header {
 
 /* Computer output styling */
 
-#computer-player-output {
-  margin: 0 auto 5rem;
-  background: var(--screen-color);
-  border: 3px solid #444;
-  border-radius: 5px;
-  height: 10rem;
-  width: 30rem;
-  line-height: 1.25rem;
-  overflow-y: scroll;
-  padding: 1rem 0.5rem;
+#text-game {
+  /* border: 3px solid #444; */
+  padding: 3rem;
+  flex: center;
 }
 
-#computer-player-output::-webkit-scrollbar {
+.computer-screen {
+  background: var(--screen-color);
+  color: var(--output-color);
+  border: 3px solid #444;
+  border-radius: 5px;
+  padding: 1rem 0.5rem;
+  overflow: hidden;
+  font-weight: bold;
+  text-align: left;
+  font-family: "Courier New", Courier, monospace;
+  line-height: 1.25rem;
+}
+
+.computer-screen::-webkit-scrollbar {
   display: none;
 }
 
-#computer-player-output p {
-  font-family: "Courier New", Courier, monospace;
-  color: var(--output-color);
-  text-align: left;
-  font-weight: bold;
+#computer-player-output {
+  margin: 0 auto 2rem;
+  height: 10rem;
+  width: 30rem;
+  overflow-y: scroll;
 }
 
+
+/* Score boxes */
+
+#bj-scores {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+
+.bj-display-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  height: 1rem;
+}
+
+.score-box {
+  text-align: center;
+  width: 5rem;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Player Money Display */
+
+
+#bj-display-box-title {
+  font-size: .75rem;
+}
 
 /* Blackjack Buttons */
 
 .human-player-input {
-  margin: 5rem 0 5rem;
+  margin: 1rem 0;
   text-align: center;
+}
+
+#bj-prompt {
+  font-style: italic;
 }
 
 #bj-input-buttons {
@@ -84,13 +133,13 @@ header {
 }
 
 #bj-exit-button {
-  margin-top: 4rem 0;
+  margin-top: 2rem 0 0 rem;
   height: 4rem;
   width: 6rem;
 }
 
 #bj-new-game-button {
-  margin: 4rem 0;
+  margin: 2rem 0 0rem;
   height: 4rem;
   width: 6rem;
 }
@@ -98,10 +147,11 @@ header {
 #ask-to-play {
   font-style: italic;
   text-align: center;
+  margin-top: 1rem;
 }
 
 #bj-play {
-  margin: 4rem 0;
+  margin: 2rem 0;
   height: 4rem;
   width: 6rem;
 }
