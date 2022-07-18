@@ -30,8 +30,8 @@ class Gui {
     let humanOutput = document.createElement("p");
     let jimboOutput = document.createElement("p");
     if (gameOn) {
-      humanOutput.innerText = `${human.total}`;
-      jimboOutput.innerText = `${jimbo.total}`;
+      humanOutput.innerText = `${human.hands[human.hands.length-1].total}`;
+      jimboOutput.innerText = `${jimbo.hands[0].total}`;
     } else {
       humanOutput.innerText = "0";
       jimboOutput.innerText = "0";
@@ -119,9 +119,9 @@ class Gui {
     if (
       human &&
       human.cards &&
-      human.hands[length - 1].cards.length == 3 &&
-      human.hands[length - 1].cards[1].value ===
-        human.hands[length - 1].cards[2].value
+      human.hands[human.hands.length - 1].cards.length == 3 &&
+      human.hands[human.hands.length - 1].cards[1].value ===
+        human.hands[human.handslength - 1].cards[2].value
     ) {
       splitButton.classList.remove("faded-input");
     } else {
@@ -133,7 +133,7 @@ class Gui {
     if (
       gameOn &&
       human.hands.length > 0 &&
-      human.hands[length].cards.length === 2
+      human.hands[human.hands.length-1].cards.length === 2
     ) {
       ddownButton.classList.remove("faded-input");
       this.canDouble = true;
@@ -274,15 +274,15 @@ class Card {
       addedValue = this.value;
     } else if (this.value === 14) {
       addedValue = 11;
-      hand.hasAce = true;
+      hand.aces++;
     } else {
       addedValue = 10;
     }
     hand.total += addedValue;
 
-    if (handtotal > 21 && hand.hasAce && !hand.usedAce) {
+    if (hand.total > 21 && hand.aces > 0) {
       hand.total -= 10;
-      hand.hasAce = false;
+      hand.aces --;
     }
   }
 }
@@ -324,6 +324,7 @@ class Deck {
 
 class Hand {
   constructor(...cards) {
+    this.aces = 0;
     this.cards = [...cards];
     this.total = 0;
   }
@@ -335,10 +336,9 @@ class Player {
     // game specific
 
     this.total = 0;
-    this.hasAce = false;
     // this.hand = []; // adds cards to the current hand. Useful for split maybe?
     this.hands = [];
-    this.handsLeft;
+    this.handsLeft = 0;
     this.currentBet = MIN_BET;
     this.doubled = false;
     this.usedSplit = false;
@@ -379,7 +379,7 @@ class Player {
       success = !currentDeck.isDealt(card);
 
       if (success) {
-        card.calculateNewTotal(this, givenHand);
+        card.calculateNewTotal(givenHand);
         card.dealt = true;
         givenHand.cards.push(card);
       }
@@ -391,7 +391,7 @@ class Player {
 
   split() {
     const hand2 = new Hand();
-    hand2.push(this.hands[length - 1].cards[1].pop());
+    hand2.push(this.hands[this.hands.length - 1].cards[1].pop());
     this.hands.push[hand2];
     this.usedSplit = true;
   }
@@ -410,9 +410,8 @@ class Player {
   // Resets values to original data
 
   clearGameSpecific() {
-    this.total = 0;
-    this.hasAce = false;
     this.hands = [];
+    this.handsLeft = 0;
     this.doubled = false;
     currentDeck = new Deck();
   }
@@ -424,38 +423,38 @@ class Jimbo extends Player {
   // Executes one complete Jimbo game after the player stops.
 
   jimboTurn() {
-    this.total += jimbo.hand[0].value;
+    this.hands[0].cards[0].calculateNewTotal(jimbo.hands[0]); // add the first card back into total
     Gui.renderOutput(
       `Jimbo starts with a ${this.hands[0].cards[0].convertFace()} of ${
-        this.hand[0].suit
+        this.hands[0].cards[0].suit
       } and a
-        ${this.hands[1].cards[0].convertFace()} of ${
-        this.hands[1].cards[0].suit
-      }. His starting total is ${this.total}.`,
+        ${this.hands[0].cards[1].convertFace()} of ${
+        this.hands[0].cards[1].suit
+      }. His starting total is ${this.hands[0].total}.`,
       SPACING
     );
 
     let jimboHit;
-    while (this.total < JIMBO_MAX && this.total < human.total) {
-      if (this.total > MAX_VALUE) {
+    while (this.hands[0].total < JIMBO_MAX && this.hands[0].total < human.hands[human.hands.length-1].total) {
+      if (this.hands[0].total > MAX_VALUE) {
         Gui.renderOutput(JIMBO_BUST);
         break;
       }
-      jimboHit = this.hit();
+      jimboHit = this.hit(this.hands[0]);
 
       Gui.renderOutput(
         `Jimbo hits for ${jimboHit.convertFace()}! His total is now ${
-          this.total
+          this.hands[0].total
         }`,
         SPACING
       );
     }
 
-    if (this.total === MAX_VALUE && this.hand.cards.length === 2) {
+    if (this.hands[0].total === MAX_VALUE && this.hands[0].cards.length === 2) {
       Gui.renderOutput(BLACKJACK);
     }
 
-    currentGame.determineWinner();
+    currentGame.determineWinner(human.hands[human.hands.length-1]);
   }
 }
 
@@ -468,8 +467,8 @@ class Game {
     human.clearGameSpecific();
 
     jimbo = new Jimbo();
-    jimbo.hands[length] = jimbo.newHand();
-    human.hands[length] = human.newHand();
+    jimbo.hands[0] = jimbo.newHand();
+    human.hands[0] = human.newHand();
     gameOn = true;
 
     Gui.toggleAllGameButtons();
@@ -486,11 +485,11 @@ class Game {
 
   startingHand() {
     Gui.renderOutput(
-      `You start with a ${human.hands[length].cards[0].convertFace()} of ${
-        human.hands[length].cards[0].suit
-      } and a ${human.hands[length].cards[1].convertFace()} of ${
-        human.hands[length].cards[1].suit
-      }. Your starting total is ${human.hands[length].total}.`
+      `You start with a ${human.hands[human.hands.length-1].cards[0].convertFace()} of ${
+        human.hands[human.hands.length-1].cards[0].suit
+      } and a ${human.hands[human.hands.length-1].cards[1].convertFace()} of ${
+        human.hands[human.hands.length-1].cards[1].suit
+      }. Your starting total is ${human.hands[human.hands.length-1].total}.`
     );
 
     // this.hasSplit = split();
@@ -499,7 +498,7 @@ class Game {
       const originalBet = human.currentBet;
       human.currentBet *= 1.5;
       Gui.renderOutput(BLACKJACK);
-      this.determineWinner();
+      this.determineWinner(human.hands[human.hands.length-1]);
       human.currentBet = originalBet; // resets bet after hand
     }
 
@@ -517,37 +516,37 @@ class Game {
 
   // Checks if given player busted
 
-  ifBust(player) {
-    return player.total > MAX_VALUE;
+  ifBust(hand) {
+    return hand.total > MAX_VALUE;
   }
 
   // Checks for blackjack
 
-  ifBlackJack(player) {
-    return player.total === MAX_VALUE && player.hands[length].length === 2;
+  ifBlackJack(hand) {
+    return hand.total === MAX_VALUE && hand.length === 2;
   }
 
   // Outputs Jimbo's current visible card
 
   displayJimbo() {
-    if (jimbo.total === MAX_VALUE) {
+    if (jimbo.hands[0].total === MAX_VALUE) {
       Gui.renderOutput("Just a sec... looks like Jimbo has a...");
       Gui.renderOutput(BLACKJACK);
-      this.determineWinner();
+      this.determineWinner(human.hands[human.hands.length-1]);
       return;
     }
 
-    jimbo.total = jimbo.hands[length].cards[1].value;
+    jimbo.hands[0].total = jimbo.hands[0].cards[1].value;
 
-    if (jimbo.total == 14) {
-      jimbo.total = 11; // only display shown card in total
-    } else if (jimbo.total >= 10) {
-      jimbo.total = 10;
+    if (jimbo.hands[0].total == 14) {
+      jimbo.hands[0].total = 11; // only display shown card in total
+    } else if (jimbo.hands[0].total >= 10) {
+      jimbo.hands[0].total = 10;
     }
 
     Gui.renderOutput(
-      `Jimbo is showing ${jimbo.hands[length].cards[1].convertFace()} of ${
-        jimbo.hands[length].cards[1].suit
+      `Jimbo is showing ${jimbo.hands[0].cards[1].convertFace()} of ${
+        jimbo.hands[0].cards[1].suit
       }.`,
       SPACING
     );
@@ -555,15 +554,16 @@ class Game {
 
   // Checks results of game to determine winner
 
-  determineWinner() {
+  determineWinner(hand) {
+    console.log('Determining winner of ' + hand.total)
     if (
-      (human.total > jimbo.total && !(human.total > MAX_VALUE)) ||
-      (jimbo.total > MAX_VALUE && human.total <= MAX_VALUE)
+      (hand.total > jimbo.hands[0].total && !(hand.total > MAX_VALUE)) ||
+      (jimbo.hands[0].total > MAX_VALUE && hand.total <= MAX_VALUE)
     ) {
       human.wallet += human.currentBet;
       Gui.renderOutput(PLAYER_WINS);
       Gui.renderOutput(`You have won \$${human.currentBet}!`, SPACING);
-    } else if (human.total === jimbo.total) {
+    } else if (hand.total === jimbo.hands[0].total) {
       Gui.renderOutput(PLAYER_DRAW, SPACING);
     } else {
       human.wallet -= human.currentBet;
@@ -657,19 +657,19 @@ function newGameHandler() {
 
 function hitButtonHandler() {
   if (gameOn && !human.doubled) {
-    const hitCard = human.hit(human.hands[length]);
+    const hitCard = human.hit(human.hands[human.hands.length-1]);
     Gui.toggledDDown();
     Gui.renderOutput(
-      `You hit for ${hitCard.convertFace()}! Your total is now ${human.hands[length].total}.`,
+      `You hit for ${hitCard.convertFace()}! Your total is now ${human.hands[human.hands.length-1].total}.`,
       SPACING
     );
 
-    if (currentGame.ifBust(human)) {
+    if (currentGame.ifBust(human.hands[human.hands.length-1])) {
       Gui.renderOutput(PLAYER_BUST);
-      currentGame.determineWinner();
-    } else if (currentGame.ifBlackJack(human)) {
+      currentGame.determineWinner(human.hands[human.hands.length-1]);
+    } else if (currentGame.ifBlackJack(human.hands[human.hands.length-1])) {
       Gui.renderOutput(BLACKJACK);
-      currentGame.determineWinner();
+      currentGame.determineWinner(human.hands[human.hands.length-1]);
     }
   }
   Gui.toggleHitButton();
@@ -688,15 +688,15 @@ function stayButtonHandler() {
 function splitButtonHandler() {
   if (
     human &&
-    human.hand.length == 2 &&
-    human.hand[0].value === human.hand[1].value
+    human.hands[human.hands.length-1].length == 2 &&
+    human.hand[human.hands.length-1].card.value === human.hand[human.hands.length-1].card.value
   ) {
     human.split();
   }
 }
 
 function ddownButtonHandler() {
-  if (human.doubleDown()) {
+  if (human.doubleDown() && !human.hasSplit) {
     Gui.renderOutput(
       `You have doubled down! 
         Your current bet is now \$ ${human.currentBet}.`,
