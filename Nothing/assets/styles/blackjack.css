@@ -12,13 +12,33 @@ body {
   display: none;
 }
 
+.page-container {
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#left-side {
+  width: 25vw;
+  text-align: center;
+}
+#middle {
+  justify-content: center;
+  width: 50vw;
+  align-items: center;
+  text-align: center;
+}
+
+#right-side {
+  width: 25vw;
+  text-align: center;
+}
+
 header {
-  display: flex;
   size: 5rem;
   font-weight: bold;
   letter-spacing: .5rem;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; 
+  align-items: center;  */
   /* margin-bottom: 2rem; */
 }
 
@@ -65,23 +85,29 @@ header {
 
 #bj-scores {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   text-align: center;
+  max-width: 40vw;
+  margin: 0 5rem;
 }
 
 .bj-display-box {
-  display: flex;
+  /* display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between; */
   align-items: center;
   text-align: center;
-  max-height: 1rem;
+  margin: 0 2rem;
+  height: 2rem;
 }
 
 .score-box {
+  padding: .25rem;
   text-align: center;
+  margin: 0 2rem;
   width: 5rem;
+  height: 2rem;
 }
 
 #bj-display-box-title {
@@ -189,3 +215,50 @@ header {
   height: 4rem;
   width: 6rem;
 }
+
+/* Statistics viewer */
+
+#statistics-frame {
+  height:fit-content;
+  transition: all 0.2s ease;
+  margin-right: 4rem;
+  opacity: .5;
+  max-width: 20vh;
+}
+
+#statistics-frame:hover {
+  transform: scale(1.5);
+  opacity: 1;
+}
+
+#statistics-header {
+  margin-top: 10vh;
+  font-size: .9rem;
+}
+
+#statistics-table {
+  font-size: .6rem;
+  line-height: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  list-style: none;
+  text-align: left;
+  padding: .5rem .5rem;
+
+  
+}
+
+#statistics-table {
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  background: #111;
+}
+
+#stat-categories {
+  display: inline;
+  justify-content: left;
+  text-align: left;
+}
+
