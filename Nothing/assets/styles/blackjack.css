@@ -1,6 +1,6 @@
 :root {
-  --screen-color: lime;
-  --output-color: #333;
+  --screen-color: #333;
+  --output-color: rgb(47, 187, 47);
   --hover-color: rgb(20, 69, 109);
 }
 
@@ -59,7 +59,7 @@ header {
 .computer-screen {
   background: var(--screen-color);
   color: var(--output-color);
-  border: 3px solid #444;
+  border: 3px solid #111;
   border-radius: 5px;
   padding: 1rem 0.5rem;
   overflow: hidden;
@@ -103,10 +103,10 @@ header {
 }
 
 .score-box {
-  padding: .25rem;
+  padding: .4rem;
   text-align: center;
   margin: 0 2rem;
-  width: 5rem;
+  width: 7rem;
   height: 2rem;
 }
 
@@ -163,7 +163,7 @@ header {
 }
 
 #bj-bet-input {
-  background-color: black;
+  background-color: #222;
   border: 1px solid  white;
   padding: 0.2rem;
   /* border: none; */
@@ -176,8 +176,11 @@ header {
   margin-top: .5rem;
 }
 
+#bj-bet-input:disabled {
+  background-color: black;
+}
+
 #bj-bet-input:focus {
-  border: 1px solid  white;
   font-size: 1.5rem;
 }
 
@@ -185,6 +188,11 @@ header {
 #bj-bet-input.bj-bet-saved:focus {
   border: none;
   font-size: 1.5rem;
+}
+
+#bet-changer {
+  padding: .5rem;
+  width: fit-content;
 }
 
 .new-exit-bj {
@@ -223,7 +231,7 @@ header {
   transition: all 0.2s ease;
   margin-right: 4rem;
   opacity: .5;
-  max-width: 20vh;
+  max-width: 25vh;
 }
 
 #statistics-frame:hover {
@@ -237,7 +245,7 @@ header {
 }
 
 #statistics-table {
-  font-size: .6rem;
+  font-size: .4em;
   line-height: 1rem;
   display: flex;
   flex-direction: row;
@@ -252,13 +260,14 @@ header {
 
 #statistics-table {
   border: 1px solid rgba(255, 255, 255, 0.4);
+  width: fit-content;
+  padding: .5rem 1rem;
   border-radius: 10px;
   background: #111;
+  margin: auto;
 }
 
 #stat-categories {
-  display: inline;
-  justify-content: left;
   text-align: left;
+  margin-right: 5rem;
 }
-
