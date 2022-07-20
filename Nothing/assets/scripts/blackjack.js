@@ -599,7 +599,9 @@ class Game {
         activeHand.cards[0].suit
       } and a ${activeHand.cards[1].convertFace()} of ${
         activeHand.cards[1].suit
-      }. Your starting total is ${activeHand.total}.`
+      }. Your starting total is ${activeHand.total}.
+      
+      `
     );
     
     // this.hasSplit = split();
@@ -660,7 +662,7 @@ class Game {
   }
 
   resolveHands() {
-    
+
   }
 
   // Checks results of game to determine winner
