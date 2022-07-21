@@ -160,14 +160,19 @@ header {
   align-items: center;
   justify-content: center;
   margin-top: 2rem;
+  height: 10vh;
+}
+
+#change-bet {
+  letter-spacing: .2rem;
+
 }
 
 #bj-bet-input {
   background-color: #222;
   border: 1px solid  white;
   padding: 0.2rem;
-  /* border: none; */
-  width: 7rem;
+  width: 8rem;
   color: white;
   text-align: center;
   border-radius: 5rem;
@@ -188,6 +193,7 @@ header {
 #bj-bet-input.bj-bet-saved:focus {
   border: none;
   font-size: 1.5rem;
+  /* letter-spacing: .3rem; */
 }
 
 #bet-changer {
@@ -242,6 +248,9 @@ header {
 #statistics-header {
   margin-top: 10vh;
   font-size: .9rem;
+  letter-spacing: .3rem;
+  margin-bottom: .25rem;
+
 }
 
 #statistics-table {

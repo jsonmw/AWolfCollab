@@ -69,7 +69,7 @@ class Gui {
     if (human) {
       bjBetEntry.value = `$ ${human.currentBet}`;
     } else {
-      bjBetEntry.value = `$ ${MIN_BET}`;
+      bjBetEntry.value = `$${MIN_BET}`;
     }
   }
 
@@ -110,11 +110,11 @@ class Gui {
 
   static toggleBetButton() {
     if (gameOn || !human) {
-      bjBetButton.classList.add("faded-input");
+      bjBetButton.classList.add("invisible");
       bjBetEntry.classList.add("bj-bet-saved");
       bjBetEntry.setAttribute("disabled", "disabled");
     } else {
-      bjBetButton.classList.remove("faded-input");
+      bjBetButton.classList.remove("invisible");
       bjBetEntry.classList.remove("bj-bet-saved");
       bjBetEntry.removeAttribute("disabled");
     }
@@ -227,7 +227,12 @@ const FACE_CARDS = ["ace", "king", "queen", "jack"];
 
 const SPACING = `-------------------------------------------
     `;
-const GREETING = "Hello, I am jimbo. Welcome to my BlackJack game.";
+const GREETING = `Hello, I am jimbo. Welcome to my Blackjack game.
+
+                Click NEW PLAYER to challenge jimbo!`;
+const CHANGE_BET = `To change your wager, enter a new amount in the CURRENT BET field then click SAVE CHANGES. 
+  
+  Click NEW GAME to begin!`;
 const BET_SUCCESS = `Jimbo drools at your new bet of `;
 const BET_FAIL = "Jimbo groans audibly -- Try a valid bet!";
 const PLAYER_BUST = "You have busted. Great idea to hit, dingus!";
@@ -444,10 +449,10 @@ class Player {
   }
 
   finishHand() {
-    this.finishedHands.push(this.hands[this.hands.length-1].pop());
+    this.finishedHands.push(this.hands[this.hands.length - 1].pop());
 
-    if(this.hands.length === 0) {
-        currentGame.resolveHands();
+    if (this.hands.length === 0) {
+      currentGame.resolveHands();
     }
   }
 
@@ -525,7 +530,6 @@ class Jimbo extends Player {
   // Executes one complete Jimbo game after the player stops.
 
   jimboTurn() {
-   
     this.hands[0].calcHandTotal(); // recalculates total with first card added back in
     Gui.renderOutput(
       `Jimbo starts with a ${this.hands[0].cards[0].convertFace()} of ${
@@ -603,7 +607,7 @@ class Game {
       
       `
     );
-    
+
     // this.hasSplit = split();
 
     if (this.ifBlackJack(activeHand)) {
@@ -616,12 +620,6 @@ class Game {
         this.displayJimbo();
       }
       this.determineWinner(activeHand);
-
-      if (human.doubled) {
-        human.currentBet /= 2;
-        Gui.renderBet();
-      }
-
       human.currentBet = +originalBet; // resets bet after hand
     }
   }
@@ -661,9 +659,7 @@ class Game {
     );
   }
 
-  resolveHands() {
-
-  }
+  resolveHands() {}
 
   // Checks results of game to determine winner
 
@@ -682,14 +678,12 @@ class Game {
       human.wins++;
       Gui.renderOutput(PLAYER_WINS);
       Gui.renderOutput(`You have won \$${human.currentBet}!`, SPACING);
+      this.resetDoubleDown();
     } else if (hand.total === jimbo.hands[0].total) {
       human.ties++;
       Gui.renderOutput(PLAYER_DRAW, SPACING);
+      this.resetDoubleDown();
     } else {
-      if (human.doubled) {
-        human.currentBet /= 2;
-        Gui.renderBet();
-      }
       human.losses++;
       human.totalWinnings -= human.currentBet;
       human.updateBets(false);
@@ -699,6 +693,7 @@ class Game {
         `Jimbo slurps up \$ ${human.currentBet} from your wallet!`,
         SPACING
       );
+      this.resetDoubleDown();
     }
     // human.hands.pop();
     Gui.toggleAllGameButtons();
@@ -708,6 +703,13 @@ class Game {
       Gui.renderStats();
       Gui.toggleAllGameButtons();
       Gui.toggleNewGameButton();
+    }
+  }
+
+  resetDoubleDown() {
+    if (human.doubled) {
+      human.currentBet /= 2;
+      Gui.renderBet();
     }
   }
 }
@@ -720,8 +722,11 @@ function betButtonHandler() {
     betValue = +betValue; // parses int
 
     // validates entered text was a number or gives appropriate insult
-
-    if (!isNaN(betValue) && betValue <= human.wallet) {
+    Gui.clearOutput();
+    Gui.renderBet();
+    if (isNaN(betValue)) {
+      Gui.renderOutput(BET_FAIL, SPACING);
+    } else if (betValue <= human.wallet) {
       if (betValue >= MIN_BET || betValue === human.wallet) {
         human.currentBet = betValue;
         Gui.renderOutput(`${BET_SUCCESS}${human.currentBet}!`, SPACING);
@@ -729,9 +734,7 @@ function betButtonHandler() {
         Gui.renderOutput(JIMBO_INSULT_MIN_BET, SPACING);
       }
     } else {
-      Gui.clearOutput();
       Gui.renderOutput(JIMBO_INSULT_ISF, SPACING);
-      Gui.renderBet();
       Gui.renderOutput(`Try something you can afford. Like ${human.wallet}!`);
     }
   }
@@ -769,9 +772,10 @@ function newPlayerHandler() {
     Gui.clearOutput();
     human = new Player("Human");
     Gui.resetStats();
-    Gui.renderOutput(GREETING, SPACING);
+    // Gui.renderOutput(GREETING, SPACING);
     Gui.toggleNewPlayerButton();
     Gui.toggleNewGameButton();
+    Gui.renderOutput(CHANGE_BET, SPACING);
   }
 }
 
@@ -801,8 +805,8 @@ function hitButtonHandler() {
       }.`,
       SPACING
     );
-    if(human.doubled) {
-        this.cantHit = true;
+    if (human.doubled) {
+      this.cantHit = true;
     }
     if (currentGame.ifBust(activeHand)) {
       Gui.renderOutput(PLAYER_BUST);
