@@ -220,8 +220,10 @@ const MAX_VALUE = 21;
 const JIMBO_MAX = 17;
 const STARTING_FUNDS = 1500;
 const MIN_BET = 25;
+const SPLIT_NUM = 3;
 const SUITS = ["hearts", "spades", "clubs", "diamonds"];
 const FACE_CARDS = ["ace", "king", "queen", "jack"];
+const SPLIT_STRINGS = ["one", "two", "three", "four"];
 
 // Message Constants
 
@@ -377,6 +379,8 @@ class Player {
     this.currentBet = MIN_BET;
     this.doubled = false;
     this.cantHit = false;
+    this.hasSplit = false;
+    this.splitCount = 0;
 
     // persistent between games
 
@@ -409,8 +413,8 @@ class Player {
       this.ties,
       this.bjs,
       this.jimboBJs,
-      this.highestWin,
-      this.lowestLoss,
+      "$ " + this.highestWin,
+      "$ " + this.lowestLoss,
       "$ " + (this.totalWinnings / (this.games - this.ties)).toFixed(0),
       "$ " + this.highestBet,
       "$ " + (this.totalBets / this.games).toFixed(0),
@@ -448,13 +452,19 @@ class Player {
     return newHand;
   }
 
+  // Ends the current hand and loads the next hand into the activeHand field or ends game if applicable.
+
   finishHand() {
     this.finishedHands.push(this.hands[this.hands.length - 1].pop());
 
     if (this.hands.length === 0) {
       currentGame.resolveHands();
+    } else {
+      activeHand = this.hands[this.hands.length - 1];
     }
   }
+
+  // Handles the hit function of the game.
 
   hit(givenHand) {
     let success = false;
@@ -480,21 +490,22 @@ class Player {
   //   Unfinished
 
   split() {
-    human.totalSplits++;
+    this.totalSplits++;
+    this.splitCount++;
+    this.hasSplit = true;
+
     const hand2 = new Hand();
     hand2.push(this.hands[this.hands.length - 1].cards[1].pop());
     this.hands.push[hand2];
 
-    // this.hands[this.hands.length-2].cards[0].calculateNewTotal(this.hands[this.hands.length-2]);
-    // this.hands[this.hands.length-1].cards[0].calculateNewTotal(this.hands[this.hands.length-1]);
-
     this.hands[this.hands.length - 2].calcHandTotal();
     this.hands[this.hands.length - 1].calcHandTotal();
 
-    // this.handTotals.pop();
-    this.handTotals.push(this.hands[length - 2].totals);
-    this.handTotals.push(this.hands[length - 1].totals);
-    // remember to set activeHand to new
+    this.activeHand = hand2;
+    // // this.handTotals.pop();
+    // this.handTotals.push(this.hands[length - 2].totals);
+    // this.handTotals.push(this.hands[length - 1].totals);
+    // // remember to set activeHand to new
   }
 
   // Doubles current bet but allows for only one more hit.
@@ -517,6 +528,8 @@ class Player {
     this.doubled = false;
     this.cantHit = false;
     currentDeck = new Deck();
+    this.hasSplit = false;
+    this.splitCount = 0;
   }
 }
 
@@ -574,7 +587,7 @@ class Jimbo extends Player {
 
 class Game {
   constructor() {
-    this.hasSplit = false;
+    // this.hasSplit = false;
     human.clearGameSpecific();
 
     jimbo = new Jimbo("Jimbo");
@@ -587,8 +600,7 @@ class Game {
     // Gui.toggleNewGameButton();
     Gui.renderMoney();
 
-    this.startingHand(); // doesn't show jimbo if player busts or blackjacks
-    if (gameOn) {
+    if ((human.hasSplit && human.hands === 0) || (gameOn && !hasSplit)) {
       // to start
       this.displayJimbo();
     }
@@ -609,18 +621,8 @@ class Game {
     );
 
     // this.hasSplit = split();
-
-    if (this.ifBlackJack(activeHand)) {
-      const originalBet = +human.currentBet;
-      human.currentBet = Math.floor(human.currentBet * 1.5);
-      human.bjs++;
-      Gui.renderOutput(BLACKJACK);
-      human.handsLeft--;
-      if (this.ifBlackJack(jimbo.hands[0])) {
-        this.displayJimbo();
-      }
-      this.determineWinner(activeHand);
-      human.currentBet = +originalBet; // resets bet after hand
+    if (this.ifBlackjack(activeHand)) {
+      resolveBlackjack();
     }
   }
 
@@ -632,14 +634,26 @@ class Game {
 
   // Checks for blackjack
 
-  ifBlackJack(hand) {
+  ifBlackjack(hand) {
     return hand.total === MAX_VALUE && hand.cards.length === 2;
   }
 
+  resolveBlackjack() {
+    const originalBet = +human.currentBet;
+    human.currentBet = Math.floor(human.currentBet * 1.5);
+    human.bjs++;
+    Gui.renderOutput(BLACKJACK);
+    human.handsLeft--;
+    if (this.ifBlackjack(jimbo.hands[0])) {
+      this.displayJimbo();
+    }
+    this.determineWinner(activeHand);
+    human.currentBet = +originalBet; // resets bet after hand
+  }
   // Outputs Jimbo's current visible card
 
   displayJimbo() {
-    if (this.ifBlackJack(jimbo.hands[0])) {
+    if (this.ifBlackjack(jimbo.hands[0])) {
       Gui.renderOutput("Just a sec... looks like Jimbo has a...");
       Gui.renderOutput(BLACKJACK);
       human.jimboBJs++;
@@ -659,7 +673,19 @@ class Game {
     );
   }
 
-  resolveHands() {}
+  resolveHands() {
+    if (!human.hasSplit) {
+      this.determineWinner();
+    } else {
+      let itr = 0;
+      for (const hand of human.hands) {
+        Gui.renderOutput(`Hand ${SPLIT_STRINGS[itr]}:`);
+        this.startingHand();
+        this.determineWinner();
+        human.finishHand();
+      }
+    }
+  }
 
   // Checks results of game to determine winner
 
@@ -829,7 +855,7 @@ function stayButtonHandler() {
 }
 
 function splitButtonHandler() {
-  if (activeHand.checkSplit()) {
+  if (activeHand.checkSplit() && human.splitCount > SPLIT_NUM) {
     human.split();
   }
 }
